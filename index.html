@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+  Workshop-sida: listar GeoJSON-lagren i mappen lager/ och gör en geojson.io-länk + QR-kod per lager.
+
+  Hur länkarna fungerar:
+  geojson.io kan läsa en GeoJSON-fil från en webbadress:  geojson.io/#data=data:text/x-url,<adress>
+  Filen måste vara publik och tillåta att andra sajter läser den (CORS). GitHub Pages och
+  raw.githubusercontent.com gör det. Själva datat ligger alltså i repot, och länken pekar dit.
+
+  Var filerna finns:
+  - Om sidan ligger på GitHub Pages (namn.github.io/repo/) används samma adress automatiskt.
+  - Annars (t.ex. öppnad som lokal fil) skriver du in användare/repo/gren, och länkarna pekar
+    på raw.githubusercontent.com. Kräver att repot är publikt.
+-->
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workshop: Malmö i geojson.io</title>
+<!-- QR-kodsbibliotek (MIT). Om det är blockerat visas bara länktexten. -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+  body { font-family: -apple-system, Segoe UI, sans-serif; max-width: 1100px; margin: 24px auto; padding: 0 16px; color: #222; }
+  h1 { margin-bottom: 4px; }
+  .lead { color: #555; margin-top: 0; }
+  #installning { background: #f4f4f4; padding: 10px 12px; border-radius: 6px; margin: 16px 0; display: none; }
+  #installning input { width: 320px; padding: 4px; }
+  .rutnat { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .kort { border: 1px solid #ddd; border-radius: 8px; padding: 14px; display: flex; gap: 12px; }
+  .kort.dummy { border-left: 5px solid #ff7f00; }
+  .kort h3 { margin: 0 0 4px; font-size: 16px; }
+  .kort p { margin: 4px 0; font-size: 13px; }
+  .meta { color: #777; font-size: 12px; }
+  .qr { width: 120px; min-width: 120px; cursor: zoom-in; }
+  .qr svg { width: 120px; height: 120px; }
+  a.knapp { display: inline-block; margin: 6px 6px 0 0; padding: 5px 10px; background: #2a6; color: #fff; border-radius: 4px; text-decoration: none; font-size: 13px; }
+  a.knapp.gra { background: #666; }
+  #stor { position: fixed; inset: 0; background: rgba(255,255,255,.97); display: none; align-items: center; justify-content: center; flex-direction: column; cursor: zoom-out; }
+  #stor svg { width: min(80vh, 90vw); height: min(80vh, 90vw); }
+  #stor div { font-size: 28px; margin-top: 12px; }
+  .fel { color: #c00; }
+</style>
+</head>
+<body>
+<h1>Malmö i geojson.io</h1>
+<p class="lead">Skanna QR-koden eller klicka på "Öppna i geojson.io". Du kan rita, ändra och spara en egen kopia via Save-menyn i geojson.io. Ändringarna stannar i din webbläsare.</p>
+
+<!-- Visas bara när sidan inte ligger på GitHub Pages. -->
+<div id="installning">
+  GitHub-repo (användare/repo/gren):
+  <input id="repo" placeholder="olivermiilus/geojson-workshop-test/main">
+  <button id="spara">Använd</button>
+  <div class="meta">Länkarna pekar då på raw.githubusercontent.com. Repot måste vara publikt.</div>
+</div>
+
+<div id="status"></div>
+<div class="rutnat" id="lista"></div>
+
+<p class="meta" style="margin-top:24px">
+  Källor: SCB (DeSO/RegSO 2025, folkmängd 2025). Lager markerade med orange kant innehåller påhittade data.
+  Koordinater i WGS84. Bakgrundskarta i geojson.io: Mapbox/OpenStreetMap.
+</p>
+
+<div id="stor"></div>
+
+<script>
+// Startläge för kartan i geojson.io: zoom/latitud/longitud (Malmö).
+const KARTLAGE = "11/55.58/13.01";
+
+// ---------- 1. Ta reda på var lagerfilerna ligger ----------
+
+function basAdress() {
+  // På GitHub Pages: använd sidans egen adress (mappen som index.html ligger i).
+  if (location.hostname.endsWith("github.io")) {
+    return location.origin + location.pathname.replace(/[^/]*$/, "");
+  }
+  // Annars: använd repot som användaren skrev in (sparas i webbläsaren till nästa gång).
+  const repo = localStorage.getItem("workshopRepo");
+  document.getElementById("installning").style.display = "block";
+  if (repo) document.getElementById("repo").value = repo;
+  return repo ? "https://raw.githubusercontent.com/" + repo.replace(/^\/|\/$/g, "") + "/" : null;
+}
+
+document.getElementById("spara").onclick = () => {
+  localStorage.setItem("workshopRepo", document.getElementById("repo").value.trim());
+  location.reload();
+};
+
+// ---------- 2. Bygg länkar och QR-koder ----------
+
+// geojson.io-länk som laddar filen från en webbadress.
+function geojsonioLank(filAdress) {
+  return "https://geojson.io/#data=data:text/x-url," + encodeURIComponent(filAdress) + "&map=" + KARTLAGE;
+}
+
+// Rita en QR-kod som SVG. Returnerar tom text om QR-biblioteket inte gick att ladda.
+function qrSvg(text) {
+  if (!window.qrcode) return "";
+  const qr = qrcode(0, "M"); // M = mellannivå på felkorrigering, tål lite smuts på projektorduken
+  qr.addData(text);
+  qr.make();
+  return qr.createSvgTag({ scalable: true, margin: 2 });
+}
+
+// Visa en QR-kod i helskärm (för projektor). Klick stänger.
+function visaStor(svg, titel) {
+  const ruta = document.getElementById("stor");
+  ruta.innerHTML = svg + "<div>" + titel + "</div>";
+  ruta.style.display = "flex";
+  ruta.onclick = () => (ruta.style.display = "none");
+}
+
+// ---------- 3. Läs lagerlistan och rita korten ----------
+
+(async () => {
+  const bas = basAdress();
+  const status = document.getElementById("status");
+  if (!bas) { status.textContent = "Skriv in GitHub-repot ovan för att skapa länkarna."; return; }
+
+  let lager;
+  try {
+    lager = await (await fetch(bas + "lager/lager.json")).json();
+  } catch (e) {
+    status.innerHTML = '<p class="fel">Kunde inte läsa ' + bas + 'lager/lager.json. Kontrollera repo-namnet och att repot är publikt.</p>';
+    return;
+  }
+
+  const lista = document.getElementById("lista");
+  for (const l of lager) {
+    const filAdress = bas + "lager/" + l.fil;
+    const lank = geojsonioLank(filAdress);
+    const svg = qrSvg(lank);
+    const kort = document.createElement("div");
+    kort.className = "kort" + (l.kalla.startsWith("DUMMY") ? " dummy" : "");
+    kort.innerHTML = `
+      <div class="qr" title="Klicka för stor QR-kod">${svg || '<span class="meta">QR ej tillgänglig</span>'}</div>
+      <div>
+        <h3>${l.titel}</h3>
+        <p>${l.beskrivning}</p>
+        <p class="meta">${l.antal} objekt · ${l.kb} kB<br>Källa: ${l.kalla}</p>
+        <a class="knapp" href="${lank}" target="_blank">Öppna i geojson.io</a>
+        <a class="knapp gra" href="${filAdress}" download>Ladda ner</a>
+      </div>`;
+    if (svg) kort.querySelector(".qr").onclick = () => visaStor(svg, l.titel);
+    lista.appendChild(kort);
+  }
+})();
+</script>
+</body>
+</html>

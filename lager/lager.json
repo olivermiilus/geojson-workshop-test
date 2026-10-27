@@ -1,0 +1,58 @@
+[
+ {
+  "fil": "00-alla-lager.geojson",
+  "titel": "Alla lager",
+  "beskrivning": "Alla sex lager i en fil.",
+  "kalla": "Se respektive lager",
+  "antal": 312,
+  "kb": 221
+ },
+ {
+  "fil": "01-kommungrans.geojson",
+  "titel": "Malmö kommungräns",
+  "beskrivning": "Sammanslagna DeSO-områden.",
+  "kalla": "SCB, DeSO/RegSO 2025 (geodata.scb.se) och folkmängd 2025 (tabell BE0101Y/FolkmDesoAldKon)",
+  "antal": 1,
+  "kb": 5
+ },
+ {
+  "fil": "02-regso.geojson",
+  "titel": "RegSO – regionala statistikområden",
+  "beskrivning": "Namngivna områden med folkmängd.",
+  "kalla": "SCB, DeSO/RegSO 2025 (geodata.scb.se) och folkmängd 2025 (tabell BE0101Y/FolkmDesoAldKon)",
+  "antal": 91,
+  "kb": 68
+ },
+ {
+  "fil": "03-deso-befolkning.geojson",
+  "titel": "DeSO – befolkning 2025",
+  "beskrivning": "Färg = befolkningstäthet (kvintiler). Andel 0–19 och 65+ år.",
+  "kalla": "SCB, DeSO/RegSO 2025 (geodata.scb.se) och folkmängd 2025 (tabell BE0101Y/FolkmDesoAldKon)",
+  "antal": 209,
+  "kb": 145
+ },
+ {
+  "fil": "04-dummy-mobilitetshubbar.geojson",
+  "titel": "Mobilitetshubbar (dummy)",
+  "beskrivning": "Punkter. Röd = stor, blå = liten.",
+  "kalla": "DUMMY – påhittade data för test",
+  "antal": 6,
+  "kb": 1
+ },
+ {
+  "fil": "05-dummy-cykelstrak.geojson",
+  "titel": "Cykelstråk (dummy)",
+  "beskrivning": "Linjer. Grön = befintlig, orange = planerad, lila = utredning.",
+  "kalla": "DUMMY – påhittade data för test",
+  "antal": 3,
+  "kb": 1
+ },
+ {
+  "fil": "06-dummy-utredningsomraden.geojson",
+  "titel": "Utredningsområden (dummy)",
+  "beskrivning": "Ytor.",
+  "kalla": "DUMMY – påhittade data för test",
+  "antal": 2,
+  "kb": 1
+ }
+]
