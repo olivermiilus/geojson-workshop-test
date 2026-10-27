@@ -15,6 +15,10 @@ Test (2026-10-27): visa egna GeoJSON-lager på en workshop via geojson.io, med l
 | `lager/lager.json` | Lista som `index.html` läser |
 | `bygg_lager.py` | Hämtar SCB-data och bygger om alla lager (kräver geopandas) |
 
+## Testat 2026-10-27
+
+Headless Chromium mot riktiga geojson.io, med GitHub simulerat (filerna serverades från disken). Workshop-sidan visar 7 kort med QR-koder, och geojson.io läser och ritar lagren med färgerna från filerna. Se `docs/`. Inte testat: riktig GitHub Pages, mobil, AFRY-nätet.
+
 ## Källor och licens
 
 - DeSO och RegSO 2025: SCB:s WFS `geodata.scb.se/geoserver/stat/wfs` (lager `stat:DeSO_2025`, `stat:RegSO_2025`).
@@ -49,5 +53,6 @@ Byt `KOMMUN` i skriptet för en annan kommun.
 
 - geojson.io läser bara WGS84 (lon/lat). Skriptet projicerar om från SWEREF 99 TM.
 - En länk = en fil. Därför finns `00-alla-lager.geojson`.
+- Länkformatet måste vara exakt `https://geojson.io/#data=data:text/x-url,<url-kodad adress>`. Testat 2026-10-27: `&map=` efter adressen blir en del av filnamnet, och `map=` före `data=` gör att datat inte laddas. geojson.io zoomar själv till datat.
 - Deltagarnas ändringar sparas inte centralt. Varje person exporterar sin egen version.
 - QR-koderna kräver att `cdn.jsdelivr.net` inte är blockerat. Annars visas bara länkarna.

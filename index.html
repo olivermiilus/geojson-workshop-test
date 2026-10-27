@@ -64,9 +64,6 @@
 <div id="stor"></div>
 
 <script>
-// Startläge för kartan i geojson.io: zoom/latitud/longitud (Malmö).
-const KARTLAGE = "11/55.58/13.01";
-
 // ---------- 1. Ta reda på var lagerfilerna ligger ----------
 
 function basAdress() {
@@ -89,8 +86,10 @@ document.getElementById("spara").onclick = () => {
 // ---------- 2. Bygg länkar och QR-koder ----------
 
 // geojson.io-länk som laddar filen från en webbadress.
+// Bara data= fungerar (testat 2026-10-27). geojson.io zoomar själv till datat.
+// Lägg inte till &map=: allt efter "x-url," läses som filens adress, och map= först gör att data= ignoreras.
 function geojsonioLank(filAdress) {
-  return "https://geojson.io/#data=data:text/x-url," + encodeURIComponent(filAdress) + "&map=" + KARTLAGE;
+  return "https://geojson.io/#data=data:text/x-url," + encodeURIComponent(filAdress);
 }
 
 // Rita en QR-kod som SVG. Returnerar tom text om QR-biblioteket inte gick att ladda.
