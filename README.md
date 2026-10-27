@@ -17,7 +17,7 @@ Test (2026-10-27): visa egna GeoJSON-lager på en workshop via geojson.io, med l
 
 ## Testat 2026-10-27
 
-Headless Chromium mot riktiga geojson.io, med GitHub simulerat (filerna serverades från disken). Workshop-sidan visar 7 kort med QR-koder, och geojson.io läser och ritar lagren med färgerna från filerna. Se `docs/`. Inte testat: riktig GitHub Pages, mobil, AFRY-nätet.
+Headless Chromium mot riktiga geojson.io, med GitHub simulerat (filerna serverades från disken). Workshop-sidan visar 7 kort med QR-koder, och geojson.io läser och ritar lagren med färgerna från filerna. Se `docs/`. Publicerat samma dag på https://olivermiilus.github.io/geojson-workshop-test/ och testat live: geojson.io hämtar filerna från Pages (HTTP 200) och ritar dem. Inte testat: mobil, AFRY-nätet.
 
 ## Källor och licens
 
